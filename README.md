@@ -20,7 +20,7 @@ Installation has been tested in a CentOS/MacOS platform.
 # Instructions
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
-## Data preprocessing
+## Model implementation
 **Step 1**: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix
 
 ```python
