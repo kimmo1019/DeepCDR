@@ -44,7 +44,21 @@ Note that we also directly provided the above files in the `data` folder.
 **Step 2**: Drugs structure extraction
 
 Each drug in our study will be represented as a graph containing nodes and edges. From the GDSC database, we collected 223 drugs that have unique Pubchem ids. Note that a drug under different screening condition (different GDSC drug id) may share the same Pubchem id.
-Here, we used [deepchem](https://github.com/deepchem/deepchem) library for extracting 75 different features of a drug, including atom type, degree and hybridization, etc. 
+Here, we used [deepchem](https://github.com/deepchem/deepchem) library for extracting node features and gragh of a drug. The node feature  (75 dimension) corresponds to a stom in within a drug, which includes atom type, degree and hybridization, etc. 
+
+We recorded three types of features in a list as following
+
+```python
+drug_feat = [node_feature, adj_list, degree_list]
+node_feature -- features of all atoms within a drug with size (nb_atom, 75)
+adj_list -- adjacent list of all atoms within a drug. It denotes the all the neighboring atoms indexs
+degree_list -- degree list of all atoms within a drug. It denotes the number of neighboring atoms 
+```
+
+The above feature list will be further compressed as `pubchem_id.hkl` using hickle library.
+
+Please note that we provided the extracted features of 223 drugs from GDSC database, just unzip the `drug_graph_feat.zip` file in `data/GDSC` folder
+
 
 
 
