@@ -62,7 +62,9 @@ Please note that we provided the extracted features of 223 drugs from GDSC datab
 
 
 
-**Step 2**: DeepCDR model training and testing
+**Step 3**: DeepCDR model training and testing
+
+Here, we provide a DeepCDR regression model here as an example.
 
 ```python
 python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_expr [use_gexp] -use_methy [use_methy] -checkpoint_dir [checkpoint_dir]
@@ -73,7 +75,10 @@ python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_expr [use_gexp] -
 [log_dir] - location to save the trained model
 ```
 
-The prediction outcome will be saved in `data` folder.
+The prediction outcome will be saved in `data/outcome` folder. The overall Pearson's correlation will be calculated. Besides, the correlation across different drugs and across different cell lines will also be calculated.
+
+# Contact
+If you have any question regard our code or data, please do not hesitate to open a issue or directly contact me (liu-q16@mails.tsinghua.edu.cn)
 
 
 # License
