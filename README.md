@@ -39,7 +39,13 @@ The preprocessed data will be in located in `data` folder.
 
 `genomic_methylation_561celllines_808genes_demap_features.csv` -- DNA methylation matrix where each column denotes a methylation locus and each row denotes a cell line
 
-Note that we also directly provided the above files in the `data` folder.
+Note that we also directly provided the above files in the `data` folder. 
+
+**Step 2**: Drugs structure extraction
+
+Each drug in our study will be represented as a graph containing nodes and edges. From the GDSC database, we collected 223 drugs that have unique Pubchem ids. Note that a drug under different screening condition (different GDSC drug id) may share the same Pubchem id.
+Here, we used [deepchem][https://github.com/deepchem/deepchem] library for extracting 75 different features of a drug, including atom type, degree and hybridization, etc. 
+
 
 
 **Step 2**: DeepCDR model training and testing
