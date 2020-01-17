@@ -3,7 +3,7 @@ Cancer Drug Response Prediction via a Hybrid Graph Convolutional Network
  
  ![model](https://github.com/kimmo1019/DeepCDR/blob/master/model.png)
  
- DeepCDR is a hybrid graph convolutional network for cancer drug response prediction.
+ DeepCDR is a hybrid graph convolutional network for cancer drug response prediction. It takes both multi-omics data of cancer cell lines and drug structure as inputs and predicts the drug sensitivity (binary or contineous IC50 value). 
  
  # Requirements
 - Keras==2.1.4
@@ -15,7 +15,7 @@ DeepCDR can be downloaded by
 ```shell
 git clone https://github.com/kimmo1019/DeepCDR
 ```
-Installation has been tested in a CentOS/MacOS platform.
+Installation has been tested in a Linux/MacOS platform.
 
 # Instructions
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
@@ -30,7 +30,8 @@ python DataPreprocess.py [drug screening file] [genomic mutation file] [gene exp
 [gene expression file] - Transcritomic profile from CCLE database
 [DNA methylation file] - Epigenomic profile from CCLE database
 ```
-The preprocessed data will be in `data` folder.
+The preprocessed data will be in located in `data` folder.
+
 
 **Step 2**: DeepCDR model training and testing
 
