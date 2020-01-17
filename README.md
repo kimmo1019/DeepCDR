@@ -21,7 +21,7 @@ Installation has been tested in a Linux/MacOS platform.
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
 ## Model implementation
-**Step 1**: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database
+**Step 1: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database**
 
 ```python
 python DataPreprocess.py [drug info file] [drug screening file] [genomic mutation file] [gene expression file] [DNA methylation file]
@@ -41,7 +41,7 @@ The preprocessed data will be in located in `data` folder.
 
 Note that we also directly provided the above files in the `data` folder. 
 
-**Step 2**: Drugs structure extraction
+**Step 2: Drug feature representation**
 
 Each drug in our study will be represented as a graph containing nodes and edges. From the GDSC database, we collected 223 drugs that have unique Pubchem ids. Note that a drug under different screening condition (different GDSC drug id) may share the same Pubchem id.
 Here, we used [deepchem](https://github.com/deepchem/deepchem) library for extracting node features and gragh of a drug. The node feature  (75 dimension) corresponds to a stom in within a drug, which includes atom type, degree and hybridization, etc. 
@@ -62,7 +62,7 @@ Please note that we provided the extracted features of 223 drugs from GDSC datab
 
 
 
-**Step 3**: DeepCDR model training and testing
+**Step 3: DeepCDR model training and testing**
 
 Here, we provide a DeepCDR regression model here as an example.
 
