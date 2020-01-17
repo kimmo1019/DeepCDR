@@ -21,16 +21,22 @@ Installation has been tested in a Linux/MacOS platform.
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
 ## Model implementation
-**Step 1**: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix
+**Step 1**: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database
 
 ```python
-python DataPreprocess.py [drug screening file] [genomic mutation file] [gene expression file] [DNA methylation file]
+python DataPreprocess.py [drug info file] [drug screening file] [genomic mutation file] [gene expression file] [DNA methylation file]
+[drug info file] - Drug information including name, pubchem id, etc
 [drug screening file] - Drug information and IC50 values from GDSC database
 [genomic mutation file] - Genomic profile from CCLE database
 [gene expression file] - Transcritomic profile from CCLE database
 [DNA methylation file] - Epigenomic profile from CCLE database
 ```
 The preprocessed data will be in located in `data` folder.
+`genomic_mutation_34673_demap_features.csv` --  genomic mutation matrix where each column denotes mutation locus and each row denotes a cell line
+`genomic_expression_561celllines_697genes_demap_features.csv` -- gene expression matrix where each column denotes a coding gene and each row denotes a cell line
+`genomic_methylation_561celllines_808genes_demap_features.csv` -- DNA methylation matrix where each column denotes a methylation locus and each row denotes a cell line
+
+Note that we also directly provided the above files in the `data` folder.
 
 
 **Step 2**: DeepCDR model training and testing
