@@ -50,9 +50,9 @@ We recorded three types of features in a list as following
 
 ```python
 drug_feat = [node_feature, adj_list, degree_list]
-node_feature -- features of all atoms within a drug with size (nb_atom, 75)
-adj_list -- adjacent list of all atoms within a drug. It denotes the all the neighboring atoms indexs
-degree_list -- degree list of all atoms within a drug. It denotes the number of neighboring atoms 
+node_feature - features of all atoms within a drug with size (nb_atom, 75)
+adj_list - adjacent list of all atoms within a drug. It denotes the all the neighboring atoms indexs
+degree_list - degree list of all atoms within a drug. It denotes the number of neighboring atoms 
 ```
 
 The above feature list will be further compressed as `pubchem_id.hkl` using hickle library.
