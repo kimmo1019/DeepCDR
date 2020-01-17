@@ -32,8 +32,11 @@ python DataPreprocess.py [drug info file] [drug screening file] [genomic mutatio
 [DNA methylation file] - Epigenomic profile from CCLE database
 ```
 The preprocessed data will be in located in `data` folder.
+
 `genomic_mutation_34673_demap_features.csv` --  genomic mutation matrix where each column denotes mutation locus and each row denotes a cell line
+
 `genomic_expression_561celllines_697genes_demap_features.csv` -- gene expression matrix where each column denotes a coding gene and each row denotes a cell line
+
 `genomic_methylation_561celllines_808genes_demap_features.csv` -- DNA methylation matrix where each column denotes a methylation locus and each row denotes a cell line
 
 Note that we also directly provided the above files in the `data` folder.
