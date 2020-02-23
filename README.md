@@ -31,7 +31,7 @@ python DataPreprocess.py [drug info file] [drug screening file] [genomic mutatio
 [gene expression file] - Transcritomic profile from CCLE database
 [DNA methylation file] - Epigenomic profile from CCLE database
 ```
-The preprocessed data will be in located in `data` folder.
+The required input data `genomic mutation file`, `gene expression file` and `DNA methylation file` can be downloaded from a [Cloud Server](https://cloud.tsinghua.edu.cn/d/9b42762d8eef4f42a835/). The preprocessed data will be in located in `data` folder.
 
 `genomic_mutation_34673_demap_features.csv` --  genomic mutation matrix where each column denotes mutation locus and each row denotes a cell line
 
@@ -39,7 +39,7 @@ The preprocessed data will be in located in `data` folder.
 
 `genomic_methylation_561celllines_808genes_demap_features.csv` -- DNA methylation matrix where each column denotes a methylation locus and each row denotes a cell line
 
-Note that we also directly provided the above files in the `data` folder. 
+Note that we also directly provided the preprocessed files in the `data` folder. So this step can be skipped if you don't need the raw data.
 
 **Step 2: Drug feature representation**
 
