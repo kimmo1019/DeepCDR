@@ -67,14 +67,19 @@ Genomic_mutation_file = '%s/CCLE/genomic_mutation_34673_demap_features.csv'%DPAT
 Cancer_response_exp_file = '%s/CCLE/GDSC_IC50.csv'%DPATH
 Gene_expression_file = '%s/CCLE/genomic_expression_561celllines_697genes_demap_features.csv'%DPATH
 Methylation_file = '%s/CCLE/genomic_methylation_561celllines_808genes_demap_features.csv'%DPATH
+IC50_thred_file = '%s/CCLE/IC50_thred.txt'%DPATH
 Max_atoms = 100
 
 
-def MetadataGenerate(Drug_info_file,Cell_line_info_file,Genomic_mutation_file,Drug_feature_file,Gene_expression_file,Methylation_file,filtered):
+def MetadataGenerate(Drug_info_file,Cell_line_info_file,Genomic_mutation_file,Drug_feature_file,Gene_expression_file,Methylation_file,filtered,use_thred=True):
     #drug_id --> pubchem_id
     reader = csv.reader(open(Drug_info_file,'r'))
     rows = [item for item in reader]
     drugid2pubchemid = {item[0]:item[5] for item in rows if item[5].isdigit()}
+    name2pubchemid = {item[1]:item[5] for item in rows if item[5].isdigit()}
+    drug_names = [item.strip() for item in open(IC50_thred_file).readlines()[0].split('\t')]
+    IC50_threds = [float(item.strip()) for item in open(IC50_thred_file).readlines()[1].split('\t')]
+    drug2thred = {name2pubchemid[a]:b for a,b in zip(drug_names,IC50_threds) if a in name2pubchemid.keys()}
 
     #map cellline --> cancer type
     cellline2cancertype ={}
@@ -118,7 +123,14 @@ def MetadataGenerate(Drug_info_file,Cell_line_info_file,Genomic_mutation_file,Dr
             if str(pubchem_id) in drug_pubchem_id_set and each_cellline in mutation_feature.index:
                 if not np.isnan(experiment_data_filtered.loc[each_drug,each_cellline]) and each_cellline in cellline2cancertype.keys():
                     ln_IC50 = float(experiment_data_filtered.loc[each_drug,each_cellline])
-                    data_idx.append((each_cellline,pubchem_id,ln_IC50,cellline2cancertype[each_cellline])) 
+                    if use_thred:
+                        if pubchem_id in drug2thred.keys():
+                            binary_IC50 = 1 if ln_IC50 < drug2thred[pubchem_id] else 0
+                            data_idx.append((each_cellline,pubchem_id,binary_IC50,cellline2cancertype[each_cellline])) 
+                    else:
+                        binary_IC50 = 1 if ln_IC50 > -2 else 0
+                        data_idx.append((each_cellline,pubchem_id,binary_IC50,cellline2cancertype[each_cellline])) 
+
     nb_celllines = len(set([item[0] for item in data_idx]))
     nb_drugs = len(set([item[1] for item in data_idx]))
     print('%d instances across %d cell lines and %d drugs were generated.'%(len(data_idx),nb_celllines,nb_drugs))
@@ -181,9 +193,9 @@ def FeatureExtract(data_idx,drug_feature,mutation_feature,gexpr_feature,methylat
     mutation_data = np.zeros((nb_instance,1, nb_mutation_feature,1),dtype='float32')
     gexpr_data = np.zeros((nb_instance,nb_gexpr_features),dtype='float32') 
     methylation_data = np.zeros((nb_instance, nb_methylation_features),dtype='float32') 
-    target = np.zeros(nb_instance,dtype='float32')
+    target = np.zeros(nb_instance,dtype='int16')
     for idx in range(nb_instance):
-        cell_line_id,pubchem_id,ln_IC50,cancer_type = data_idx[idx]
+        cell_line_id,pubchem_id,binary_IC50,cancer_type = data_idx[idx]
         #modify
         feat_mat,adj_list,_ = drug_feature[str(pubchem_id)]
         #fill drug data,padding to the same size with zeros
@@ -192,10 +204,26 @@ def FeatureExtract(data_idx,drug_feature,mutation_feature,gexpr_feature,methylat
         mutation_data[idx,0,:,0] = mutation_feature.loc[cell_line_id].values
         gexpr_data[idx,:] = gexpr_feature.loc[cell_line_id].values
         methylation_data[idx,:] = methylation_feature.loc[cell_line_id].values
-        target[idx] = ln_IC50
+        target[idx] = binary_IC50
         cancer_type_list.append([cancer_type,cell_line_id,pubchem_id])
     return drug_data,mutation_data,gexpr_data,methylation_data,target,cancer_type_list
     
+def precision(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+def recall(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + K.epsilon())
+    return recall
+def f1_score(y_true, y_pred):
+    prec = precision(y_true, y_pred)
+    recal = recall(y_true, y_pred)
+    return 2.0*prec*recal/(prec+recal+K.epsilon())
+def average_precision(y_true, y_pred):
+    return tf.py_func(average_precision_score, (y_true, y_pred), tf.double) 
 
 
 class MyCallback(Callback):
@@ -211,7 +239,7 @@ class MyCallback(Callback):
         return
     def on_train_end(self, logs={}):
         self.model.set_weights(self.best_weight)
-        self.model.save('../checkpoint/MyBestDeepCDR_%s.h5'%model_suffix)
+        self.model.save('../checkpoint/MyBestDeepCDR_classify_%s.h5'%model_suffix)
         if self.stopped_epoch > 0 :
             print('Epoch %05d: early stopping' % (self.stopped_epoch + 1))
         return
@@ -221,10 +249,13 @@ class MyCallback(Callback):
 
     def on_epoch_end(self, epoch, logs={}):
         y_pred_val = self.model.predict(self.x_val)
-        pcc_val = pearsonr(self.y_val, y_pred_val[:,0])[0]
-        print 'pcc-val: %s' % str(round(pcc_val,4))
-        if pcc_val > self.best:
-            self.best = pcc_val
+        roc_val = roc_auc_score(self.y_val, y_pred_val)
+        precision,recall,_, = metrics.precision_recall_curve(self.y_val,y_pred_val)
+        pr_val = -np.trapz(precision,recall)
+        print 'roc-val: %.4f, pr-val:%.4f' % (roc_val,pr_val)
+        if roc_val > self.best:
+            self.best = roc_val
+
             self.wait = 0
             self.best_weight = self.model.get_weights()
         else:
@@ -239,9 +270,9 @@ class MyCallback(Callback):
 
 def ModelTraining(model,X_drug_data_train,X_mutation_data_train,X_gexpr_data_train,X_methylation_data_train,Y_train,validation_data,nb_epoch=100):
     optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    model.compile(optimizer = optimizer,loss='mean_squared_error',metrics=['mse'])
+    model.compile(optimizer = optimizer,loss='binary_crossentropy',metrics=['accuracy',precision,recall,f1_score,average_precision])
     #EarlyStopping(monitor='val_loss',patience=5)
-    callbacks = [ModelCheckpoint('../checkpoint/best_DeepCDR_%s.h5'%model_suffix,monitor='val_loss',save_best_only=False, save_weights_only=False),
+    callbacks = [ModelCheckpoint('../checkpoint/best_DeepCDR_classify_%s.h5'%model_suffix,monitor='val_average_precision',save_best_only=True, save_weights_only=False),
                 MyCallback(validation_data=validation_data,patience=10)]
     X_drug_feat_data_train = [item[0] for item in X_drug_data_train]
     X_drug_adj_data_train = [item[1] for item in X_drug_data_train]
@@ -258,8 +289,12 @@ def ModelEvaluate(model,X_drug_data_test,X_mutation_data_test,X_gexpr_data_test,
     X_drug_feat_data_test = np.array(X_drug_feat_data_test)#nb_instance * Max_stom * feat_dim
     X_drug_adj_data_test = np.array(X_drug_adj_data_test)#nb_instance * Max_stom * Max_stom    
     Y_pred = model.predict([X_drug_feat_data_test,X_drug_adj_data_test,X_mutation_data_test,X_gexpr_data_test,X_methylation_data_test])
-    overall_pcc = pearsonr(Y_pred[:,0],Y_test)[0]
-    print("The overall Pearson's correlation is %.4f."%overall_pcc)
+    auROC_all = metrics.roc_auc_score(Y_test, Y_pred)
+    fpr,tpr,_,= metrics.roc_curve(Y_test,Y_pred)
+    precision,recall,_, = metrics.precision_recall_curve(Y_test,Y_pred)
+    auPR_all = -np.trapz(precision,recall)
+    print("The overall AUC and auPR is %.4f and %.4f."%(auROC_all,auPR_all))
+
     
 
 def main():
@@ -276,7 +311,7 @@ def main():
     X_drug_adj_data_test = np.array(X_drug_adj_data_test)#nb_instance * Max_stom * Max_stom  
     
     validation_data = [[X_drug_feat_data_test,X_drug_adj_data_test,X_mutation_data_test,X_gexpr_data_test,X_methylation_data_test],Y_test]
-    model = KerasMultiSourceGCNModel(use_mut,use_gexp,use_methy).createMaster(X_drug_data_train[0][0].shape[-1],X_mutation_data_train.shape[-2],X_gexpr_data_train.shape[-1],X_methylation_data_train.shape[-1],args.unit_list,args.use_relu,args.use_bn,args.use_GMP)
+    model = KerasMultiSourceGCNModel(use_mut,use_gexp,use_methy,regr=False).createMaster(X_drug_data_train[0][0].shape[-1],X_mutation_data_train.shape[-2],X_gexpr_data_train.shape[-1],X_methylation_data_train.shape[-1],args.unit_list,args.use_relu,args.use_bn,args.use_GMP)
     print('Begin training...')
     model = ModelTraining(model,X_drug_data_train,X_mutation_data_train,X_gexpr_data_train,X_methylation_data_train,Y_train,validation_data,nb_epoch=100)
     ModelEvaluate(model,X_drug_data_test,X_mutation_data_test,X_gexpr_data_test,X_methylation_data_test,Y_test,cancer_type_test_list,'%s/DeepCDR_%s.log'%(DPATH,model_suffix))
