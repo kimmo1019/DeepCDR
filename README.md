@@ -69,12 +69,11 @@ Please note that we provided the extracted features of 223 drugs from GDSC datab
 Here, we provide a DeepCDR regression model here as an example.
 
 ```python
-python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_expr [use_gexp] -use_methy [use_methy] -checkpoint_dir [checkpoint_dir]
+python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_gexp [use_gexp] -use_methy [use_methy] 
 [gpu_id] - set GPU card id (default:0)
 [use_mut] - whether use genomic mutation data (default: True)
 [use_gexp] - whether use gene expression data (default: True)
-[use_mut] - whether use DNA methylation data (default: True)
-[log_dir] - location to save the trained model
+[use_methy] - whether use DNA methylation data (default: True)
 ```
 
 The prediction outcome will be saved in `data/outcome` folder. The overall Pearson's correlation will be calculated. Besides, the correlation across different drugs and across different cell lines will also be calculated.
