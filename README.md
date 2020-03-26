@@ -21,15 +21,16 @@ Installation has been tested in a Linux/MacOS platform.
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
 ## Model implementation
-**Step 1: Preparing genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database**
+**Step 1: Data Preparing**
+
 
 Three types of raw data are required to generate genomic mutation matrix, gene expression matrix and DNA methylation matrix from CCLE database.
 
-```
-CCLE_mutations.csv - Genomic mutation from CCLE database
-CCLE_expression.csv - Gene expression profile from CCLE database
-CCLE_RRBS_TSS_1kb_20180614.txt - DNA methylation profile from CCLE database
-```
+
+`CCLE_mutations.csv` - Genomic mutation from CCLE database
+`CCLE_expression.csv` - Gene expression profile from CCLE database
+`CCLE_RRBS_TSS_1kb_20180614.txt` - DNA methylation profile from CCLE database
+
 The three types of raw data `genomic mutation file`, `gene expression file` and `DNA methylation file` can be downloaded from [CCLE database](https://depmap.org/portal/download/) or from our provided [Cloud Server](https://cloud.tsinghua.edu.cn/d/9b42762d8eef4f42a835/). 
 
 After data preprocessed, the three following preprocessed files will be in located in `data` folder.
@@ -59,8 +60,6 @@ degree_list - degree list of all atoms within a drug. It denotes the number of n
 The above feature list will be further compressed as `pubchem_id.hkl` using hickle library.
 
 Please note that we provided the extracted features of 223 drugs from GDSC database, just unzip the `drug_graph_feat.zip` file in `data/GDSC` folder
-
-
 
 
 **Step 3: DeepCDR model training and testing**
