@@ -21,17 +21,18 @@ Installation has been tested in a Linux/MacOS platform.
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
 ## Model implementation
-**Step 1: Generating genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database**
+**Step 1: Preparing genomic mutation matrix, gene expression matrix and DNA methylation matrix from raw data in CCLE database**
 
-```python
-python DataPreprocess.py [drug info file] [drug screening file] [genomic mutation file] [gene expression file] [DNA methylation file]
-[drug info file] - Drug information including name, pubchem id, etc
-[drug screening file] - Drug information and IC50 values from GDSC database
-[genomic mutation file] - Genomic profile from CCLE database
-[gene expression file] - Transcritomic profile from CCLE database
-[DNA methylation file] - Epigenomic profile from CCLE database
+Three types of raw data are required to generate genomic mutation matrix, gene expression matrix and DNA methylation matrix from CCLE database.
+
 ```
-The required input data `genomic mutation file`, `gene expression file` and `DNA methylation file` can be downloaded from a [Cloud Server](https://cloud.tsinghua.edu.cn/d/9b42762d8eef4f42a835/). The preprocessed data will be in located in `data` folder.
+CCLE_mutations.csv - Genomic mutation from CCLE database
+CCLE_expression.csv - Gene expression profile from CCLE database
+CCLE_RRBS_TSS_1kb_20180614.txt - DNA methylation profile from CCLE database
+```
+The three types of raw data `genomic mutation file`, `gene expression file` and `DNA methylation file` can be downloaded from [CCLE database](https://depmap.org/portal/download/) or from our provided [Cloud Server](https://cloud.tsinghua.edu.cn/d/9b42762d8eef4f42a835/). 
+
+After data preprocessed, the three following preprocessed files will be in located in `data` folder.
 
 `genomic_mutation_34673_demap_features.csv` --  genomic mutation matrix where each column denotes mutation locus and each row denotes a cell line
 
@@ -39,7 +40,7 @@ The required input data `genomic mutation file`, `gene expression file` and `DNA
 
 `genomic_methylation_561celllines_808genes_demap_features.csv` -- DNA methylation matrix where each column denotes a methylation locus and each row denotes a cell line
 
-Note that we also directly provided the preprocessed files in the `data` folder. So this step can be skipped if you don't need the raw data.
+We recommend to start from the preprocessed data. Please note that each preprocessed file is in `csv` format, of which the column and row name are provided to speficy `mutation location`, `gene name`, `methylation location` and corresponding `Cell line`.
 
 **Step 2: Drug feature representation**
 
