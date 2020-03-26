@@ -28,7 +28,9 @@ Three types of raw data are required to generate genomic mutation matrix, gene e
 
 
 `CCLE_mutations.csv` - Genomic mutation from CCLE database
+
 `CCLE_expression.csv` - Gene expression profile from CCLE database
+
 `CCLE_RRBS_TSS_1kb_20180614.txt` - DNA methylation profile from CCLE database
 
 The three types of raw data `genomic mutation file`, `gene expression file` and `DNA methylation file` can be downloaded from [CCLE database](https://depmap.org/portal/download/) or from our provided [Cloud Server](https://cloud.tsinghua.edu.cn/d/9b42762d8eef4f42a835/). 
