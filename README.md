@@ -21,13 +21,14 @@ Installation has been tested in a Linux/MacOS platform.
 We provide detailed step-by-step instructions for running DeepCDR model including data preprocessing, model training, and model test.
 
 ## Model implementation
+
 **Step 1: Data Preparing**
 
 
 Three types of raw data are required to generate genomic mutation matrix, gene expression matrix and DNA methylation matrix from CCLE database.
 
 
-`CCLE_mutations.csv` - Genomic mutation from CCLE database
+`CCLE_mutations.csv` - Genomic mutation profile from CCLE database
 
 `CCLE_expression.csv` - Gene expression profile from CCLE database
 
@@ -66,7 +67,9 @@ Please note that we provided the extracted features of 223 drugs from GDSC datab
 
 **Step 3: DeepCDR model training and testing**
 
-Here, we provide a DeepCDR regression model here as an example.
+Here, we provide both DeepCDR regression and classification model here.
+
+### DeepCDR regression model
 
 ```python
 python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_gexp [use_gexp] -use_methy [use_methy] 
@@ -75,8 +78,39 @@ python run_DeepCDR.py -gpu_id [gpu_id] -use_mut [use_mut] -use_gexp [use_gexp] -
 [use_gexp] - whether use gene expression data (default: True)
 [use_methy] - whether use DNA methylation data (default: True)
 ```
+One can run `python run_DeepCDR.py -gpu_id 0 -use_mut True -use_gexp True -use_methy True` to implement the DeepCDR regression model.
 
-The prediction outcome will be saved in `data/outcome` folder. The overall Pearson's correlation will be calculated. Besides, the correlation across different drugs and across different cell lines will also be calculated.
+The trained model will be saved in `data/checkpoint` folder. The overall Pearson's correlation will be calculated.
+
+### DeepCDR classification model
+
+```python
+python run_DeepCDR_classify.py -gpu_id [gpu_id] -use_mut [use_mut] -use_gexp [use_gexp] -use_methy [use_methy] 
+[gpu_id] - set GPU card id (default:0)
+[use_mut] - whether use genomic mutation data (default: True)
+[use_gexp] - whether use gene expression data (default: True)
+[use_methy] - whether use DNA methylation data (default: True)
+```
+One can run `python run_DeepCDR_classify.py -gpu_id 0 -use_mut True -use_gexp True -use_methy True` to implement the DeepCDR lassification model.
+
+The trained model will be saved in `data/checkpoint` folder. The overall AUC and auPRn will be calculated.
+
+## External patient data
+
+We also provided the external patient data downloaded from [Firehose Broad GDAC](http://gdac.broadinstitute.org/runs/stddata__2016_01_28/). The patient data were preprocessed the same way as cell line data. The preprocessed data can be downloaded from our [Server](https://cloud.tsinghua.edu.cn/f/f0d3420e712c43c9a688/). 
+
+The preprocessed data contain three important files:
+
+`mut.csv` - Genomic mutation profile of patients
+
+`expr.csv` - Gene expression profile of patients
+
+`methy.csv` - DNA methylation profile of patients
+
+Note that the preprocessed patient data (`csv` format) have exact the same columns names as the three cell line data (`genomic_mutation_34673_demap_features.csv`, `genomic_expression_561celllines_697genes_demap_features.csv`, `genomic_methylation_561celllines_808genes_demap_features.csv`). The only difference is that the row name of patient data were replaced with patient unique barcode instead of cell line name.
+
+Such format-consistent data is easy for external evaluation by repacing the cell line data with patient data.
+
 
 # Contact
 If you have any question regard our code or data, please do not hesitate to open a issue or directly contact me (liu-q16@mails.tsinghua.edu.cn)
