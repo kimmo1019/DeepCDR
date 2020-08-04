@@ -1,5 +1,7 @@
 # DeepCDR
 Cancer Drug Response Prediction via a Hybrid Graph Convolutional Network
+
+This work has been accepted to [ECCB2020](https://eccb2020.info/) and will also appear in `Bioinformatics` soon.
  
  ![model](https://github.com/kimmo1019/DeepCDR/blob/master/model.png)
  
