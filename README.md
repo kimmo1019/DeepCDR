@@ -1,7 +1,7 @@
 # DeepCDR
 Cancer Drug Response Prediction via a Hybrid Graph Convolutional Network
 
-This work has been accepted to [ECCB2020](https://eccb2020.info/) and will also appear in `Bioinformatics` soon.
+This work has been accepted to [ECCB2020](https://eccb2020.info/) and was also published in the journal [Bioinformatics](https://academic.oup.com/bioinformatics/article/36/Supplement_2/i911/6055929).
  
  ![model](https://github.com/kimmo1019/DeepCDR/blob/master/model.png)
  
@@ -120,6 +120,10 @@ As GDSC database only measured IC50 of part cell line and drug paires. We applie
 # Contact
 If you have any question regard our code or data, please do not hesitate to open a issue or directly contact me (liu-q16@mails.tsinghua.edu.cn)
 
+# Cite
+If you used our work in your research, please consider citing our paper
+
+Qiao Liu, Zhiqiang Hu, Rui Jiang, Mu Zhou, DeepCDR: a hybrid graph convolutional network for predicting cancer drug response, Bioinformatics, 2020, 36(2):i911-i918.
 
 # License
 This project is licensed under the MIT License - see the LICENSE.md file for details
