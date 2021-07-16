@@ -118,7 +118,7 @@ Such format-consistent data is easy for external evaluation by repacing the cell
 As GDSC database only measured IC50 of part cell line and drug paires. We applied DeepCDR to predicted the missing IC50 values in GDSC database. The predicted results can be find at `data/Missing_data_pre/records_pre_all.txt`. Each record represents a predicted drug and cell line pair. The records were sorted by the predicted median IC50 values of a drug (see Fig.2E).
 
 # Contact
-If you have any question regard our code or data, please do not hesitate to open a issue or directly contact me (liu-q16@mails.tsinghua.edu.cn)
+If you have any question regard our code or data, please do not hesitate to open a issue or directly contact me (liuqiao@stanford.edu)
 
 # Cite
 If you used our work in your research, please consider citing our paper
