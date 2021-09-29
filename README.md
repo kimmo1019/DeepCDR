@@ -93,9 +93,9 @@ python run_DeepCDR_classify.py -gpu_id [gpu_id] -use_mut [use_mut] -use_gexp [us
 [use_gexp] - whether use gene expression data (default: True)
 [use_methy] - whether use DNA methylation data (default: True)
 ```
-One can run `python run_DeepCDR_classify.py -gpu_id 0 -use_mut True -use_gexp True -use_methy True` to implement the DeepCDR lassification model.
+One can run `python run_DeepCDR_classify.py -gpu_id 0 -use_mut True -use_gexp True -use_methy True` to implement the DeepCDR classification model.
 
-The trained model will be saved in `data/checkpoint` folder. The overall AUC and auPRn will be calculated.
+The trained model will be saved in `data/checkpoint` folder. The overall auROC and auPRC will be calculated.
 
 ## External patient data
 
